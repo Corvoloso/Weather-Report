@@ -11,3 +11,8 @@ Ao iniciar o app é pedido a permissão de GPS do celular e com as coordenadas �
 É bem simples, para utilizar o app você tem duas opções:
  - Instalar o APK disponibilizado no [dist](../dist) no seu celular.
  - Clonar o projeto e rodar na própria maquina.
+
+
+![Weather Report Jojo](https://vignette.wikia.nocookie.net/jjba/images/4/46/TAH.png/revision/latest/top-crop/width/360/height/450?cb=20170615152601&path-prefix=pt-br)
+
+> Let's just go insane, how 'bout it? - Weather Report
