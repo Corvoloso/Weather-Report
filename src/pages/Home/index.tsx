@@ -8,17 +8,17 @@ import { keys } from '../../config/keys';
 
 import { formatKelvinToCelsius } from '../../utils/formatTemperature';
 
-import sunnyBackgroundImg from '../../assets/sunnyBackground.png';
-import colderBackgroundImg from '../../assets/colderBackground.png';
+import backgroundImg from '../../assets/background.jpg';
 
 import {
   LoadingContainer,
   Container,
   WeatherContainer,
+  WeatherPrimaryContainer,
+  WeatherSecondaryContainer,
   Weather,
-  Location,
-  InfoContainer,
-  Info,
+  WeatherInfo,
+  WeatherInfoMini,
   Button,
   ButtonText,
 } from './styles';
@@ -33,7 +33,6 @@ interface WeatherData {
   tempMax: number;
   tempMin: number;
   feelsLike: number;
-  sky: string;
   humidity: number;
   address: WeatherDataAddress;
 }
@@ -54,7 +53,6 @@ const App: React.FC = () => {
         setWeatherData({
           temperature: formatKelvinToCelsius(response.data.main.temp),
           humidity: response.data.main.humidity,
-          sky: response.data.weather[0].description,
           feelsLike: formatKelvinToCelsius(response.data.main.temp),
           tempMax: formatKelvinToCelsius(response.data.main.temp),
           tempMin: formatKelvinToCelsius(response.data.main.temp),
@@ -77,13 +75,13 @@ const App: React.FC = () => {
             `/weather?lat=${position.coords.latitude}&lon=${position.coords.longitude}&appid=${keys.api}`,
           );
 
+          console.log(response.data.main);
           setWeatherData({
             temperature: formatKelvinToCelsius(response.data.main.temp),
             humidity: response.data.main.humidity,
-            sky: response.data.weather[0].description,
             feelsLike: formatKelvinToCelsius(response.data.main.temp),
-            tempMax: formatKelvinToCelsius(response.data.main.temp),
-            tempMin: formatKelvinToCelsius(response.data.main.temp),
+            tempMax: formatKelvinToCelsius(response.data.main.temp_max),
+            tempMin: formatKelvinToCelsius(response.data.main.temp_min),
             address: {
               street: response.data.name,
               country: response.data.sys.country,
@@ -106,33 +104,23 @@ const App: React.FC = () => {
           <ActivityIndicator size="large" color="#5465FF" />
         </LoadingContainer>
       ) : (
-        <Container
-          source={
-            weatherData.temperature >= 25
-              ? sunnyBackgroundImg
-              : colderBackgroundImg
-          }
-        >
+        <Container source={backgroundImg}>
           <WeatherContainer>
-            <Weather temp={weatherData.temperature}>
-              {`${weatherData.temperature}°C`}
-            </Weather>
-
-            <Location temp={weatherData.temperature}>
-              {`${weatherData.address.street}, ${weatherData.address.country}`}
-            </Location>
+            <WeatherPrimaryContainer>
+              <Weather>{`${weatherData.temperature}°C`}</Weather>
+              <WeatherInfo>{`${weatherData.address.street}, ${weatherData.address.country}`}</WeatherInfo>
+            </WeatherPrimaryContainer>
+            <WeatherSecondaryContainer>
+              <WeatherInfoMini>{`Sensação de ${weatherData.feelsLike}°C`}</WeatherInfoMini>
+              <WeatherInfoMini>{`Umidade de ${weatherData.humidity}%`}</WeatherInfoMini>
+            </WeatherSecondaryContainer>
+            <WeatherSecondaryContainer>
+              <WeatherInfoMini>{`Máxima - ${weatherData.tempMax}°C`}</WeatherInfoMini>
+              <WeatherInfoMini>{`Mínima - ${weatherData.tempMin}°C`}</WeatherInfoMini>
+            </WeatherSecondaryContainer>
           </WeatherContainer>
 
-          <InfoContainer>
-            <Info>{`Sensação: ${weatherData.feelsLike}`}</Info>
-
-            <Info>{`Umidade: ${weatherData.humidity}%`}</Info>
-
-            <Info>{`Maxima: ${weatherData.tempMax}`}</Info>
-            <Info>{`Mínima: ${weatherData.tempMin}`}</Info>
-          </InfoContainer>
-
-          <Button temp={weatherData.temperature} onPress={handleUpdateWeather}>
+          <Button onPress={handleUpdateWeather}>
             <ButtonText>Atualizar</ButtonText>
           </Button>
         </Container>
