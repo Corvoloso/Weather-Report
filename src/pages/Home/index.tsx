@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
 import geolocation from '@react-native-community/geolocation';
-import { ActivityIndicator } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
+import Icon from 'react-native-vector-icons/Feather';
 import api from '../../services/api';
 
 import { keys } from '../../config/keys';
@@ -14,11 +15,13 @@ import {
   LoadingContainer,
   Container,
   WeatherContainer,
-  WeatherPrimaryContainer,
-  WeatherSecondaryContainer,
+  Title,
+  TodayData,
+  TodayTitle,
+  TodayDescription,
+  WeatherDataContainer,
   Weather,
-  WeatherInfo,
-  WeatherInfoMini,
+  LocationText,
   Button,
   ButtonText,
 } from './styles';
@@ -54,8 +57,8 @@ const App: React.FC = () => {
           temperature: formatKelvinToCelsius(response.data.main.temp),
           humidity: response.data.main.humidity,
           feelsLike: formatKelvinToCelsius(response.data.main.temp),
-          tempMax: formatKelvinToCelsius(response.data.main.temp),
-          tempMin: formatKelvinToCelsius(response.data.main.temp),
+          tempMax: formatKelvinToCelsius(response.data.main.temp_max),
+          tempMin: formatKelvinToCelsius(response.data.main.temp_min),
           address: {
             street: response.data.name,
             country: response.data.sys.country,
@@ -75,7 +78,6 @@ const App: React.FC = () => {
             `/weather?lat=${position.coords.latitude}&lon=${position.coords.longitude}&appid=${keys.api}`,
           );
 
-          console.log(response.data.main);
           setWeatherData({
             temperature: formatKelvinToCelsius(response.data.main.temp),
             humidity: response.data.main.humidity,
@@ -106,22 +108,33 @@ const App: React.FC = () => {
       ) : (
         <Container source={backgroundImg}>
           <WeatherContainer>
-            <WeatherPrimaryContainer>
+            <Title>Weather Report</Title>
+
+            <TodayData>
+              <Icon
+                name="sun"
+                color="#FFA500"
+                size={32}
+                style={{ marginRight: 16 }}
+              />
+
+              <View>
+                <TodayTitle>Hoje</TodayTitle>
+                <TodayDescription>18/05</TodayDescription>
+              </View>
+            </TodayData>
+
+            <WeatherDataContainer>
               <Weather>{`${weatherData.temperature}°C`}</Weather>
-              <WeatherInfo>{`${weatherData.address.street}, ${weatherData.address.country}`}</WeatherInfo>
-            </WeatherPrimaryContainer>
-            <WeatherSecondaryContainer>
-              <WeatherInfoMini>{`Sensação de ${weatherData.feelsLike}°C`}</WeatherInfoMini>
-              <WeatherInfoMini>{`Umidade de ${weatherData.humidity}%`}</WeatherInfoMini>
-            </WeatherSecondaryContainer>
-            <WeatherSecondaryContainer>
-              <WeatherInfoMini>{`Máxima - ${weatherData.tempMax}°C`}</WeatherInfoMini>
-              <WeatherInfoMini>{`Mínima - ${weatherData.tempMin}°C`}</WeatherInfoMini>
-            </WeatherSecondaryContainer>
+
+              <LocationText>
+                {`${weatherData.address.street}, ${weatherData.address.country}`}
+              </LocationText>
+            </WeatherDataContainer>
           </WeatherContainer>
 
           <Button onPress={handleUpdateWeather}>
-            <ButtonText>Atualizar</ButtonText>
+            <Icon name="globe" size={48} color="#fff" />
           </Button>
         </Container>
       )}
