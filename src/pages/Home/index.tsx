@@ -17,6 +17,8 @@ import {
   WeatherContainer,
   Weather,
   Location,
+  InfoContainer,
+  Info,
   Button,
   ButtonText,
 } from './styles';
@@ -28,6 +30,11 @@ interface WeatherDataAddress {
 
 interface WeatherData {
   temperature: number;
+  tempMax: number;
+  tempMin: number;
+  feelsLike: number;
+  sky: string;
+  humidity: number;
   address: WeatherDataAddress;
 }
 
@@ -46,6 +53,11 @@ const App: React.FC = () => {
 
         setWeatherData({
           temperature: formatKelvinToCelsius(response.data.main.temp),
+          humidity: response.data.main.humidity,
+          sky: response.data.weather[0].description,
+          feelsLike: formatKelvinToCelsius(response.data.main.temp),
+          tempMax: formatKelvinToCelsius(response.data.main.temp),
+          tempMin: formatKelvinToCelsius(response.data.main.temp),
           address: {
             street: response.data.name,
             country: response.data.sys.country,
@@ -67,6 +79,11 @@ const App: React.FC = () => {
 
           setWeatherData({
             temperature: formatKelvinToCelsius(response.data.main.temp),
+            humidity: response.data.main.humidity,
+            sky: response.data.weather[0].description,
+            feelsLike: formatKelvinToCelsius(response.data.main.temp),
+            tempMax: formatKelvinToCelsius(response.data.main.temp),
+            tempMin: formatKelvinToCelsius(response.data.main.temp),
             address: {
               street: response.data.name,
               country: response.data.sys.country,
@@ -98,11 +115,22 @@ const App: React.FC = () => {
         >
           <WeatherContainer>
             <Weather temp={weatherData.temperature}>
-              {`${weatherData.temperature}° C`}
+              {`${weatherData.temperature}°C`}
             </Weather>
 
-            <Location>{`${weatherData.address.street}, ${weatherData.address.country}`}</Location>
+            <Location temp={weatherData.temperature}>
+              {`${weatherData.address.street}, ${weatherData.address.country}`}
+            </Location>
           </WeatherContainer>
+
+          <InfoContainer>
+            <Info>{`Sensação: ${weatherData.feelsLike}`}</Info>
+
+            <Info>{`Umidade: ${weatherData.humidity}%`}</Info>
+
+            <Info>{`Maxima: ${weatherData.tempMax}`}</Info>
+            <Info>{`Mínima: ${weatherData.tempMin}`}</Info>
+          </InfoContainer>
 
           <Button temp={weatherData.temperature} onPress={handleUpdateWeather}>
             <ButtonText>Atualizar</ButtonText>

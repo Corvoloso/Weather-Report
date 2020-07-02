@@ -31,7 +31,6 @@ export const WeatherContainer = styled.View`
 
 export const Weather = styled.Text<WeatherProps>`
   font-size: 48px;
-  font-weight: 700;
 
   ${props =>
     props.temp >= 25
@@ -43,16 +42,21 @@ export const Weather = styled.Text<WeatherProps>`
         `}
 `;
 
-export const Location = styled.Text`
+export const Location = styled.Text<WeatherProps>`
   font-size: 16px;
-  ${props =>
-    props.temp >= 25
-      ? css`
-          color: #ccc;
-        `
-      : css`
-          color: #fff;
-        `}
+  color: #fff;
+`;
+
+export const InfoContainer = styled.View`
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+export const Info = styled.Text`
+  min-width: 200px;
+  font-size: 16px;
+  color: #000;
 `;
 
 export const Button = styled.TouchableOpacity<WeatherProps>`
