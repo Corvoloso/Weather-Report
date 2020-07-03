@@ -1,4 +1,0 @@
-#Fri Jul 03 17:12:24 BRT 2020
-base.0=/home/corvoloso/www/challenges/weather-report/android/app/build/intermediates/dex/release/mergeDexRelease/out/classes.dex
-path.0=classes.dex
-renamed.0=classes.dex

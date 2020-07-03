@@ -1,7 +1,7 @@
 # Weather Report
 Uma aplicação simples para exibição do clima local.
 
-![Weather Report](https://media.discordapp.net/attachments/677597538286567445/728062346257498123/44581477-29de-42ee-9d10-6ecc1b86e22a.png?width=285&height=617)
+![Weather Report](https://media.discordapp.net/attachments/677597538286567445/728706237029417060/Screenshot_2020-07-03-17-18-11-643_com.helloworld.jpg?width=285&height=617)
 
 ## Como funciona?
 A aplicação funciona com a junção da [Weather API](https://openweathermap.org/api) para fazer a leitura do tempo local baseado nas coordenadas entregues pela lib da react native community [react-native-geolocation](https://github.com/react-native-community/react-native-geolocation).
