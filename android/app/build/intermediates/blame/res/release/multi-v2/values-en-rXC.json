@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "/home/corvoloso/www/challenges/ravenWeather/android/app/build/intermediates/incremental/mergeReleaseResources/merged.dir/values-en-rXC/values-en-rXC.xml",
+            "outputFile": "/home/corvoloso/www/challenges/weather-report/android/app/build/intermediates/incremental/mergeReleaseResources/merged.dir/values-en-rXC/values-en-rXC.xml",
             "map": [
                 {
                     "source": "/home/corvoloso/.gradle/caches/transforms-2/files-2.1/6e813fa6b8fc8b59c3519258210e2a27/core-1.0.1/res/values-en-rXC/values-en-rXC.xml",

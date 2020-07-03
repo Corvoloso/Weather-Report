@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import geolocation from '@react-native-community/geolocation';
-import { ActivityIndicator, View } from 'react-native';
+import Geolocation from 'react-native-geolocation-service';
+import { ActivityIndicator, View, PermissionsAndroid } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import api from '../../services/api';
 
@@ -21,9 +21,11 @@ import {
   TodayDescription,
   WeatherDataContainer,
   Weather,
+  WeatherMinMaxContainer,
+  MinMaxContainer,
+  WeatherMinMax,
   LocationText,
   Button,
-  ButtonText,
 } from './styles';
 
 interface WeatherDataAddress {
@@ -40,40 +42,30 @@ interface WeatherData {
   address: WeatherDataAddress;
 }
 
+interface GeolocationProps {
+  enableHighAccuracy: boolean;
+  timeout: number;
+  maximumAge?: number;
+}
+
+const geoOptions: GeolocationProps = {
+  enableHighAccuracy: false,
+  timeout: 3000,
+};
+
 const App: React.FC = () => {
   const [loading, setLoading] = useState(true);
-  const [weatherData, setWeatherData] = useState<WeatherData>(
-    {} as WeatherData,
-  );
+  const [weatherData, setWeatherData] = useState<WeatherData>({
+    address: {
+      country: '',
+      street: '',
+    },
+  } as WeatherData);
 
   const handleUpdateWeather = useCallback(() => {
     try {
-      geolocation.getCurrentPosition(async position => {
-        const response = await api.get(
-          `/weather?lat=${position.coords.latitude}&lon=${position.coords.longitude}&appid=${keys.api}`,
-        );
-
-        setWeatherData({
-          temperature: formatKelvinToCelsius(response.data.main.temp),
-          humidity: response.data.main.humidity,
-          feelsLike: formatKelvinToCelsius(response.data.main.temp),
-          tempMax: formatKelvinToCelsius(response.data.main.temp_max),
-          tempMin: formatKelvinToCelsius(response.data.main.temp_min),
-          address: {
-            street: response.data.name,
-            country: response.data.sys.country,
-          },
-        });
-      });
-    } catch (err) {
-      console.log(`ERROR - ${err}`);
-    }
-  }, []);
-
-  useEffect(() => {
-    const loadWeather = (): void => {
-      try {
-        geolocation.getCurrentPosition(async position => {
+      Geolocation.getCurrentPosition(
+        async position => {
           const response = await api.get(
             `/weather?lat=${position.coords.latitude}&lon=${position.coords.longitude}&appid=${keys.api}`,
           );
@@ -89,10 +81,58 @@ const App: React.FC = () => {
               country: response.data.sys.country,
             },
           });
+
           setLoading(false);
-        });
+        },
+        error => {
+          console.log(error);
+        },
+        geoOptions,
+      );
+
+      setLoading(false);
+    } catch (err) {
+      console.log(`ERROR - ${err}`);
+    }
+  }, []);
+
+  useEffect(() => {
+    const loadWeather = async (): Promise<void> => {
+      try {
+        await PermissionsAndroid.requestMultiple([
+          'android.permission.ACCESS_COARSE_LOCATION',
+          'android.permission.ACCESS_FINE_LOCATION',
+        ]);
+
+        Geolocation.getCurrentPosition(
+          async position => {
+            const response = await api.get(
+              `/weather?lat=${position.coords.latitude}&lon=${position.coords.longitude}&appid=${keys.api}`,
+            );
+
+            setWeatherData({
+              temperature: formatKelvinToCelsius(response.data.main.temp),
+              humidity: response.data.main.humidity,
+              feelsLike: formatKelvinToCelsius(response.data.main.temp),
+              tempMax: formatKelvinToCelsius(response.data.main.temp_max),
+              tempMin: formatKelvinToCelsius(response.data.main.temp_min),
+              address: {
+                street: response.data.name,
+                country: response.data.sys.country,
+              },
+            });
+
+            setLoading(false);
+          },
+          error => {
+            console.log(`${error.code} - ${error.message}`);
+          },
+          geoOptions,
+        );
       } catch (err) {
         console.log(`ERROR - ${err}`);
+
+        setLoading(false);
       }
     };
 
@@ -103,7 +143,7 @@ const App: React.FC = () => {
     <>
       {loading ? (
         <LoadingContainer>
-          <ActivityIndicator size="large" color="#5465FF" />
+          <ActivityIndicator size="large" color="#333" />
         </LoadingContainer>
       ) : (
         <Container source={backgroundImg}>
@@ -112,20 +152,44 @@ const App: React.FC = () => {
 
             <TodayData>
               <Icon
-                name="sun"
-                color="#FFA500"
+                name={
+                  Number(new Date().toLocaleTimeString().split(':')[0]) >= 6 &&
+                  Number(new Date().toLocaleTimeString().split(':')[0]) <= 18
+                    ? 'sun'
+                    : 'moon'
+                }
+                color={
+                  Number(new Date().toLocaleTimeString().split(':')[0]) >= 6 &&
+                  Number(new Date().toLocaleTimeString().split(':')[0]) <= 18
+                    ? '#FFA500'
+                    : '#D8DAD3'
+                }
                 size={32}
                 style={{ marginRight: 16 }}
               />
 
               <View>
                 <TodayTitle>Hoje</TodayTitle>
-                <TodayDescription>18/05</TodayDescription>
+                <TodayDescription>
+                  {new Date().toLocaleDateString()}
+                </TodayDescription>
               </View>
             </TodayData>
 
             <WeatherDataContainer>
               <Weather>{`${weatherData.temperature}°C`}</Weather>
+
+              <WeatherMinMaxContainer>
+                <MinMaxContainer>
+                  <Icon name="chevron-up" size={24} color="#029f40" />
+                  <WeatherMinMax>{`${weatherData.tempMax}°C`}</WeatherMinMax>
+                </MinMaxContainer>
+
+                <MinMaxContainer>
+                  <Icon name="chevron-down" size={24} color="#c53030" />
+                  <WeatherMinMax>{`${weatherData.tempMin}°C`}</WeatherMinMax>
+                </MinMaxContainer>
+              </WeatherMinMaxContainer>
 
               <LocationText>
                 {`${weatherData.address.street}, ${weatherData.address.country}`}

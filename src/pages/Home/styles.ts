@@ -22,6 +22,8 @@ export const LoadingContainer = styled.View`
 
 export const WeatherContainer = styled.View`
   flex: 1;
+
+  width: 100%;
   align-items: center;
 `;
 
@@ -37,7 +39,7 @@ export const TodayData = styled.View`
   align-items: center;
   justify-content: center;
 
-  margin-top: 16;
+  margin-top: 16px;
 `;
 
 export const TodayTitle = styled.Text`
@@ -53,12 +55,31 @@ export const TodayDescription = styled.Text`
 export const WeatherDataContainer = styled.View`
   justify-content: center;
   align-items: center;
+
+  width: 100%;
 `;
 
 export const Weather = styled.Text`
   margin-top: 32px;
 
   font-size: 48px;
+  color: #fff;
+`;
+
+export const WeatherMinMaxContainer = styled.View`
+  position: absolute;
+  left: 0;
+  top: 50%;
+`;
+
+export const MinMaxContainer = styled.View`
+  flex-flow: row;
+  align-items: center;
+`;
+
+export const WeatherMinMax = styled.Text`
+  margin-left: 8px;
+  font-size: 20px;
   color: #fff;
 `;
 
